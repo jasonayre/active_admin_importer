@@ -1,21 +1,6 @@
 module ActiveAdminImporter
   module DSL
-    def active_admin_importer(view: 'admin/csv/upload_csv', &block)
-      action_item :edit, :only => :index do
-        link_to "Import #{active_admin_config.resource_name.to_s.pluralize}", :action => 'upload_csv'
-      end
-
-      collection_action :upload_csv do
-        render view
-      end
-
-      collection_action :import_csv, :method => :post do
-        ::ActiveAdminImporter.import(params[:dump][:file], :model => active_admin_config.resource_class, :controller => self, &block)
-        redirect_to collection_path, notice: "CSV imported successfully!"
-      end
-    end
-
-    def defined_import_for(name='records', **options, &block)
+    def define_import_for(name='records', **options, &block)
       options[:action] ||= "import_#{name}"
       options[:form_action] ||= "upload_#{name}"
       options[:view] ||= "admin/csv/upload"
@@ -30,13 +15,10 @@ module ActiveAdminImporter
       end
 
       collection_action(options[:action], :method => :post) do
-        if block_given?
-          ::ActiveAdminImporter.import(params[:dump][:file], :model => active_admin_config.resource_class, :controller => self, &block)
-        else
-          ::ActiveAdminImporter.import(params[:dump][:file], :model => active_admin_config.resource_class, :controller => self)
-        end
-        # CsvDb.convert_save(active_admin_config.resource_class, params[:dump][:file], self, &block)
-        redirect_to collection_path, notice: "CSV imported successfully!"
+        import = ::ActiveAdminImporter.import(params[:dump][:file], :model => active_admin_config.resource_class, :controller => self, &block)
+        import.run if import.valid?
+        notice = import.valid? ? "CSV imported successfully!" : "Bad column headers, expected #{import.required_headers} got #{import.csv_file_headers}"
+        redirect_to collection_path, notice: notice
       end
     end
   end

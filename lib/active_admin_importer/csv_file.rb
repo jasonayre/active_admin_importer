@@ -1,5 +1,6 @@
 require 'csv'
 require 'digest'
+
 module ActiveAdminImporter
   class CsvFile < SimpleDelegator
     CSV_READ_OPTIONS = { :headers => true, :header_converters => :symbol }.freeze
@@ -22,7 +23,7 @@ module ActiveAdminImporter
 
     def find_row_by_number(number)
       result = ::CSV.foreach(self, CSV_READ_OPTIONS).with_index do |row, i|
-        return row if i == number-1
+        return row if i == number - 1
       end
 
       result
