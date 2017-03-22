@@ -17,8 +17,7 @@ module ActiveAdminImporter
       collection_action(options[:action], :method => :post) do
         import = ::ActiveAdminImporter.import(params[:dump][:file], :model => active_admin_config.resource_class, :controller => self, &block)
         import.run if import.valid?
-        notice = import.valid? ? "CSV imported successfully!" : "Bad column headers, expected #{import.required_headers} got #{import.csv_file_headers}"
-        redirect_to collection_path, notice: notice
+        redirect_to collection_path, notice: import.result
       end
     end
   end

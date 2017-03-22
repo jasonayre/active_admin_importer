@@ -11,7 +11,7 @@ module ActiveAdminImporter
   autoload :Import
 
   def self.import(csv_file, **options, &block)
-    io = csv_file.is_a?(ActionDispatch::Http::UploadedFile) ? csv_file.tempfile : csv_file
+    io = csv_file.is_a?(::ActionDispatch::Http::UploadedFile) ? csv_file.tempfile : csv_file
 
     import = if block_given?
       ::ActiveAdminImporter::Import.new(io, **options, &block)
@@ -19,9 +19,7 @@ module ActiveAdminImporter
       ::ActiveAdminImporter::Import.new(io, **options)
     end
 
-    import.valid?
+    import.run if import.valid?
     import
-    # puts import.valid?
-
   end
 end

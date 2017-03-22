@@ -5,16 +5,39 @@ describe ActiveAdminImporter::Import do
   let(:csv_file) { ::ActiveAdminImporter::CsvFile.read(csv_file_path) }
   let(:controller) { instance_double("controller") }
   let(:model) { double("model") }
+  let(:rows) { [1, 2].map{ |number| csv_file.find_row_by_number(number) } }
   subject { ::ActiveAdminImporter::Import.new(csv_file, :controller => controller, :model => model) }
 
   describe "#run" do
-    let(:first_row) { csv_file.find_row_by_number(1) }
-    let(:rows) { [1, 2].map{ |number| csv_file.find_row_by_number(number) } }
-
     it {
       rows.each { |row| expect(model).to receive(:create!).with(row.to_hash) }
       subject.run
     }
+  end
+
+  describe "#result" do
+    before do
+      rows.each { |row| expect(model).to receive(:create!).with(row.to_hash) }
+    end
+
+    context "does not have failures" do
+      it {
+        subject.run
+        expect(subject.result).to eq "2 / 2 imported successfully"
+      }
+    end
+
+    context "has failures" do
+      before do
+        rows.each { |row| allow(model).to receive(:create!).with(row.to_hash).and_raise(StandardError.new("error")) }
+      end
+
+      it {
+        subject.run
+        expected_message = "Failed to import rows: 1,2\n0 / 2 imported successfully"
+        expect(subject.result).to eq expected_message
+      }
+    end
   end
 
   describe "#valid?" do
