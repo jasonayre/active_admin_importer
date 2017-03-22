@@ -67,7 +67,7 @@ module ActiveAdminImporter
     def record_failure(row, e)
       log_error("FAILED TO PARSE ROW #{current_row}")
       failed_rows << current_row
-      log_error("ROW\##{current_row} - #{e.message}")
+      log_error("ERROR_ON_ROW\##{current_row} - #{e.message}")
       ::Rails.logger.error(e.message)
     end
 
