@@ -1,5 +1,5 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'active_admin_csv_importer'
+require 'active_admin_importer'
 require 'rails'
 require 'pry'
 

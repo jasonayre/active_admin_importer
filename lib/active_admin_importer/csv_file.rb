@@ -1,6 +1,6 @@
 require 'csv'
 require 'digest'
-module ActiveAdminCsvImporter
+module ActiveAdminImporter
   class CsvFile < SimpleDelegator
     CSV_READ_OPTIONS = { :headers => true, :header_converters => :symbol }.freeze
 

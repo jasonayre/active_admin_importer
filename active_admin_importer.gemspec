@@ -1,17 +1,17 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'active_admin_csv_importer/version'
+require 'active_admin_importer/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "active_admin_csv_importer"
-  spec.version       = ActiveAdminCsvImporter::VERSION
+  spec.name          = "active_admin_importer"
+  spec.version       = ActiveAdminImporter::VERSION
   spec.authors       = ["Jason Ayre"]
   spec.email         = ["jayre@peer60.com"]
 
   spec.summary       = %q{ActiveAdmin CSV Importer gem}
   spec.description   = %q{Import CSV's into activeadmin}
-  spec.homepage      = "https://github.com/jasonayre/active_admin_csv_importer"
+  spec.homepage      = "https://github.com/jasonayre/active_admin_importer"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or

@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'pry'
 
-describe ActiveAdminCsvImporter::CsvFile do
+describe ActiveAdminImporter::CsvFile do
   let(:csv_file_path) { CSV_FILES[0] }
-  subject { ActiveAdminCsvImporter::CsvFile.read(csv_file_path) }
+  subject { ActiveAdminImporter::CsvFile.read(csv_file_path) }
 
   it { expect(subject.md5).to be_instance_of(::Digest::MD5) }
   it { expect(subject.headers).to eq ['sector', 'industry_group', 'industry', 'sub_industry'] }

@@ -1,4 +1,4 @@
-module ActiveAdminCsvImporter
+module ActiveAdminImporter
   class Import
     attr_reader :current_row
 

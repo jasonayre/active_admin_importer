@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe ActiveAdminCsvImporter::Import do
+describe ActiveAdminImporter::Import do
   let(:csv_file_path) { CSV_FILES[0] }
-  let(:csv_file) { ::ActiveAdminCsvImporter::CsvFile.read(csv_file_path) }
+  let(:csv_file) { ::ActiveAdminImporter::CsvFile.read(csv_file_path) }
   let(:controller) { instance_double("controller") }
   let(:target_model) { double("target_model") }
-  subject { ::ActiveAdminCsvImporter::Import.new(csv_file, :controller => controller, :target_model => target_model) }
+  subject { ::ActiveAdminImporter::Import.new(csv_file, :controller => controller, :target_model => target_model) }
 
   describe "#run" do
     let(:first_row) { csv_file.find_row_by_number(1) }
@@ -26,7 +26,7 @@ describe ActiveAdminCsvImporter::Import do
       let(:required_headers){ ['sector', 'industry_group', 'industry', 'sub_industry'] }
 
       subject {
-        ::ActiveAdminCsvImporter::Import.new(
+        ::ActiveAdminImporter::Import.new(
           csv_file,
           :controller => controller,
           :target_model => target_model,
@@ -38,7 +38,7 @@ describe ActiveAdminCsvImporter::Import do
 
       context "invalid headers" do
         subject {
-          ::ActiveAdminCsvImporter::Import.new(
+          ::ActiveAdminImporter::Import.new(
             csv_file,
             :controller => controller,
             :target_model => target_model,
