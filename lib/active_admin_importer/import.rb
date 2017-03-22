@@ -18,7 +18,7 @@ module ActiveAdminImporter
     def run
       log_info("STARTING IMPORT")
 
-      ::CSV.parse(@csv_file, :headers => true, header_converters: :symbol) do |row|
+      ::CSV.parse(@csv_file, :headers => true, :header_converters => :symbol) do |row|
         begin
           process_row(row)
         rescue => e
