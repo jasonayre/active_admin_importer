@@ -9,10 +9,15 @@ module ActiveAdminImporter
       @required_headers = required_headers
       @current_row = 0
       @block = block if block_given?
+      notices << invalid_import_notice unless self.valid?
     end
 
     def failed_rows
       @failed_rows ||= []
+    end
+
+    def notices
+      @notices ||= []
     end
 
     def run
@@ -36,12 +41,15 @@ module ActiveAdminImporter
 
     private
 
+    def invalid_import_notice
+      "CSV imported successfully!" : "Bad column headers, expected #{@required_headers} got #{@csv_file.headers}"
+    end
+
     def processed_row_count
       @processed_row_count ||= 0
     end
 
     def process_row(row)
-      puts "HELLO"
       @current_row += 1
       log_info("IMPORTING ROW - #{current_row}")
       data = row.to_hash
