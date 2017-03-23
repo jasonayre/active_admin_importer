@@ -30,7 +30,7 @@ module ActiveAdminImporter
     end
 
     def headers
-      @headers ||= ::CSV.open(self, 'r') { |csv| csv.first }
+      @headers ||= ::CSV.open(@descriptor, 'r') { |csv| csv.first }
     end
 
     # read file in chunks for memory efficiency

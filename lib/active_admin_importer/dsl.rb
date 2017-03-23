@@ -15,9 +15,19 @@ module ActiveAdminImporter
       end
 
       collection_action(options[:action], :method => :post) do
-        import = ::ActiveAdminImporter.import(params[:dump][:file], :model => active_admin_config.resource_class, :controller => self, &block)
-        import.run if import.valid?
-        redirect_to collection_path, notice: import.result
+        binding.pry
+        _import = ::ActiveAdminImporter.import(params[:dump][:file],
+                                              :model => active_admin_config.resource_class,
+                                              :controller => self,
+                                              :required_headers => options[:required_headers],
+                                              &block)
+        puts "HELLO?"
+        # puts import.valid?
+        # binding.pry
+        # import.run if import.valid?
+        # puts collection_path
+        # puts import.result
+        redirect_to collection_path, notice: "hello"
       end
     end
   end

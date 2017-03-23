@@ -15,6 +15,10 @@ module ActiveAdminImporter
       @failed_rows ||= []
     end
 
+    def headers
+      @headers ||= @csv_file.headers
+    end
+
     def run
       log_info("STARTING IMPORT")
 
@@ -41,7 +45,7 @@ module ActiveAdminImporter
     end
 
     def valid?
-      @required_headers.all?{ |header| @csv_file.headers.include?(header) }
+      @required_headers.all?{ |header| self.headers.include?(header) }
     end
 
     private

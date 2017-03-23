@@ -12,14 +12,21 @@ module ActiveAdminImporter
 
   def self.import(csv_file, **options, &block)
     io = csv_file.is_a?(::ActionDispatch::Http::UploadedFile) ? csv_file.tempfile : csv_file
+    _import = ::ActiveAdminImporter::Import.new(io, **options, &block)
 
-    import = if block_given?
-      ::ActiveAdminImporter::Import.new(io, **options, &block)
-    else
-      ::ActiveAdminImporter::Import.new(io, **options)
+    # import = if block_given?
+    #   ::ActiveAdminImporter::Import.new(io, **options, &block)
+    # else
+    #   ::ActiveAdminImporter::Import.new(io, **options)
+    # end
+
+    # binding.pry
+    if _import.valid?
+
+      _import.run
     end
-
-    import.run if import.valid?
-    import
+    binding.pry
+    
+    _import
   end
 end
