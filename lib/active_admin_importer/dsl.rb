@@ -15,19 +15,14 @@ module ActiveAdminImporter
       end
 
       collection_action(options[:action], :method => :post) do
-        binding.pry
-        _import = ::ActiveAdminImporter.import(params[:dump][:file],
+        parent if parent?
+        import = ::ActiveAdminImporter.import(params[:dump][:file],
                                               :model => active_admin_config.resource_class,
                                               :controller => self,
                                               :required_headers => options[:required_headers],
                                               &block)
-        puts "HELLO?"
-        # puts import.valid?
-        # binding.pry
-        # import.run if import.valid?
-        # puts collection_path
-        # puts import.result
-        redirect_to collection_path, notice: "hello"
+
+        redirect_to collection_path(), alert: import.result
       end
     end
   end

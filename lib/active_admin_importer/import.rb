@@ -50,10 +50,6 @@ module ActiveAdminImporter
 
     private
 
-    def processed_row_count
-      @processed_row_count ||= 0
-    end
-
     def process_row(row)
       @current_row += 1
       log_info("IMPORTING ROW - #{current_row}")
