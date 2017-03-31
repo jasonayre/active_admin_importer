@@ -5,6 +5,7 @@ require "active_admin_importer/engine"
 module ActiveAdminImporter
   extend ::ActiveSupport::Autoload
 
+  autoload :Definition
   autoload :DSL
   autoload :Engine
   autoload :CsvFile
