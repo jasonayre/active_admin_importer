@@ -1,6 +1,7 @@
 require "active_admin_importer/version"
 require "active_support/all"
 require "active_admin_importer/engine"
+require "pry"
 
 module ActiveAdminImporter
   extend ::ActiveSupport::Autoload
@@ -22,4 +23,9 @@ module ActiveAdminImporter
     _import.run if _import.valid?
     _import
   end
+end
+
+unless ENV["SKIP_ACTIVE_ADMIN_REQUIRE"]
+  require 'activeadmin' unless defined?(::ActiveAdmin)
+  ::ActiveAdmin::DSL.send(:include, ActiveAdminImporter::DSL)
 end
