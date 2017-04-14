@@ -1,14 +1,14 @@
 module ActiveAdminImporter
   class Import
-    attr_reader :current_row, :csv_file
+    attr_reader :current_row, :csv_file, :definition, :model
 
-    def initialize(csv_file, controller:, model:, required_headers:[], &block)
+    def initialize(csv_file, definition:, controller:)
       @csv_file = ::ActiveAdminImporter::CsvFile.new(csv_file)
       @controller = controller
-      @model = model
-      @required_headers = required_headers
+      @definition = definition
+      @model = definition[:model]
+      @required_headers = definition[:required_headers]
       @current_row = 0
-      @block = block if block_given?
     end
 
     def failed_rows
@@ -56,11 +56,7 @@ module ActiveAdminImporter
       data = row.to_hash
 
       if data.present?
-        if @block
-          @block.call(@model, data, @controller)
-        else
-          @model.create!(data)
-        end
+        @definition[:each_row].call(data, self)
       end
     end
 

@@ -8,6 +8,7 @@ module ActiveAdminImporter
       @_required_headers ||= []
       @_controller = _controller
       @_model = @_controller.resource_class
+      @_each_row = lambda{ |params| @_model.create!(params) }
       self.instance_eval(&block) if block_given?
     end
 

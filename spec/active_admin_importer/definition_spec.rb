@@ -10,8 +10,8 @@ describe ActiveAdminImporter::Definition do
       view "blah"
       required_headers :name
       permitted_headers :one, :two
-      each_row do |model, params, controller|
-
+      each_row do |params, import|
+        import.model.create(params)
       end
     end
   }
