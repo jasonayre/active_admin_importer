@@ -10,6 +10,7 @@ module ActiveAdminImporter
   autoload :Engine
   autoload :CsvFile
   autoload :Import
+  autoload :Registry
 
   def self.import(csv_file, **options, &block)
     io = csv_file.is_a?(::ActionDispatch::Http::UploadedFile) ? csv_file.tempfile : csv_file
@@ -22,5 +23,17 @@ module ActiveAdminImporter
 
     _import.run if _import.valid?
     _import
+  end
+
+  def self.[](val)
+    registry[val]
+  end
+
+  def self.registry
+    @registry ||= ::ActiveAdminImporter::Registry.new
+  end
+
+  def self.register(definition)
+    @registry[definition.key] = definition
   end
 end
