@@ -8,9 +8,8 @@ describe ActiveAdminImporter::Import do
   let(:controller) { double(:controller, :controller => controller_klass)}
   let(:required_headers) { [] }
   let(:definition) {
-    ::ActiveAdminImporter::Definition.new :products, controller_klass do
+    _definition = ::ActiveAdminImporter::Definition.new :products, controller_klass do
       view "blah"
-      required_headers *required_headers
       permitted_headers :one, :two
       # before { |import| import.instance_variable_set(:"@something", "anything") }
 
@@ -18,6 +17,9 @@ describe ActiveAdminImporter::Import do
         import.model.create!(params)
       end
     end
+
+    _definition.required_headers *required_headers
+    _definition
   }
 
   let(:rows) { [1, 2].map{ |number| csv_file.find_row_by_number(number) } }
