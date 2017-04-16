@@ -20,6 +20,14 @@ module ActiveAdminImporter
       @_action = val
     end
 
+    def after(&block)
+      @_after = block
+    end
+
+    def before(&block)
+      @_before = block
+    end
+
     def key
       "#{self[:controller].name.underscore}/#{self[:name]}"
     end

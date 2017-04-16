@@ -11,7 +11,8 @@ describe ActiveAdminImporter::Import do
     _definition = ::ActiveAdminImporter::Definition.new :products, controller_klass do
       view "blah"
       permitted_headers :one, :two
-      # before { |import| import.instance_variable_set(:"@something", "anything") }
+      before { |import| import.instance_variable_set(:"@something", "anything") }
+      after { |import| import.instance_variable_set(:"@something_after", "anything") }
 
       each_row do |params, import|
         import.model.create!(params)
@@ -35,6 +36,16 @@ describe ActiveAdminImporter::Import do
       rows.each { |row| expect(definition[:each_row]).to receive(:call).with(row.to_hash, subject) }
       subject.run
     }
+
+    context "callbacks" do
+      it {
+        rows.each { |row| expect(definition[:each_row]).to receive(:call).with(row.to_hash, subject) }
+
+        subject.run
+        expect(subject.instance_variable_get(:@something)).to eq "anything"
+        expect(subject.instance_variable_get(:@something_after)).to eq "anything"
+      }
+    end
   end
 
   describe "#result" do
@@ -63,6 +74,30 @@ describe ActiveAdminImporter::Import do
   end
 
   describe "#valid?" do
+    subject {
+      ::ActiveAdminImporter::Import.new(
+        csv_file, :controller => controller, :definition => definition
+      )
+    }
+
+    context "no required headers" do
+      it { expect(subject.valid?).to eq true }
+    end
+
+    context "requires headers to be present" do
+      let(:required_headers){ ['sector', 'industry_group', 'industry', 'sub_industry'] }
+
+      it { expect(subject.valid?).to eq true }
+
+      context "invalid headers" do
+        before { required_headers << 'someotherheader' }
+
+        it { expect(subject.valid?).to eq false }
+      end
+    end
+  end
+
+  describe "#before" do
     subject {
       ::ActiveAdminImporter::Import.new(
         csv_file, :controller => controller, :definition => definition

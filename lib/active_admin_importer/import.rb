@@ -19,7 +19,12 @@ module ActiveAdminImporter
       @headers ||= @csv_file.headers
     end
 
+    def md5
+      @md5 ||= @csv_file.md5
+    end
+
     def run
+      run_before_callback if run_before_callback?
       log_info("STARTING IMPORT")
 
       ::CSV.parse(@csv_file, :headers => true, :header_converters => :symbol) do |row|
@@ -32,6 +37,7 @@ module ActiveAdminImporter
 
       log_error("FAILED TO PARSE ROWS #{failed_rows}") if failed_rows.any?
       log_info("FINISHED IMPORT")
+      run_after_callback if run_after_callback?
     end
 
     def result
@@ -50,6 +56,14 @@ module ActiveAdminImporter
 
     private
 
+    def log_error(message)
+      ::Rails.logger.error("[IMPORT: #{@csv_file.md5}]: #{message}")
+    end
+
+    def log_info(message)
+      ::Rails.logger.info("[IMPORT: #{@csv_file.md5}]: #{message}")
+    end
+
     def process_row(row)
       @current_row += 1
       log_info("IMPORTING ROW - #{current_row}")
@@ -67,12 +81,20 @@ module ActiveAdminImporter
       ::Rails.logger.error(e.message)
     end
 
-    def log_error(message)
-      ::Rails.logger.error("[IMPORT: #{@csv_file.md5}]: #{message}")
+    def run_after_callback
+      self.instance_eval(&@definition[:after])
     end
 
-    def log_info(message)
-      ::Rails.logger.info("[IMPORT: #{@csv_file.md5}]: #{message}")
+    def run_after_callback?
+      @definition[:after]
+    end
+
+    def run_before_callback
+      self.instance_eval(&@definition[:before])
+    end
+
+    def run_before_callback?
+      @definition[:before]
     end
   end
 end
