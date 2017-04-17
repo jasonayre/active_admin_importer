@@ -52,6 +52,10 @@ module ActiveAdminImporter
       @_transformer = val
     end
 
+    def transform(&block)
+      @_transform = block
+    end
+
     def view(value)
       @_view = value
     end

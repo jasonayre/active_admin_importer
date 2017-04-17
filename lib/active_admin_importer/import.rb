@@ -71,6 +71,7 @@ module ActiveAdminImporter
 
       if data.present?
         data = @definition[:transformer].new(data).to_hash if @definition[:transformer]
+        data = @definition[:transform].call(data) if @definition[:transform]
         @definition[:each_row].call(data, self)
       end
     end
