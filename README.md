@@ -12,27 +12,61 @@ Simple CSV imports for active_admin, that (shouldn't) destroy your servers memor
 
 ``` ruby
 ::ActiveAdmin.register Product do
-  define_import_for :products do |model, import_params, controller|
-    product_attributes = import_params.slice(*[:name, :price])
-    product_attributes[:user_id] = controller.current_user.id
-    model.create!(product_attributes)
+  define_import_for :products do
+	  each_row do |params, import|
+	    product_attributes = params.slice(*[:name, :price])
+	    product_attributes[:user_id] = import.controller.current_user.id
+	    import.model.create!(product_attributes)
+		end
   end
 
   #Example: require headers to be present
-  define_import_for :products_on_sale, :required_headers => ["sale_price"] do |model, import_params, controller|
-    product_attributes = import_params.slice(*[:name, :price, :sale_price])
-    product_attributes[:user_id] = controller.current_user.id
-    model.create!(product_attributes)
+  define_import_for :products_on_sale do
+	  required_headers "sale_price", "price"
+
+    each_row do |params, import|
+      product_attributes = params.slice(*[:name, :price, :sale_price])
+      product_attributes[:user_id] = import.controller.current_user.id
+      import.model.create!(product_attributes)
+    end
   end
 
   # Example: using a custom view
   # assume the view has a dropdown which allows you to select a particular store during import
-  define_import_for :products_for_store, :view => "myactiveadmin/products/upload_products_for_store_csv"
-  do |model, import_params, controller|
-    product_attributes = import_params.slice(*[:name, :price, :sale_price])
-    product_attributes[:user_id] = controller.current_user.id
-    product_attributes[:store_id] = controller.params["store_id"]
-    model.create!(product_attributes)
+  define_import_for :products_for_store do
+    view "myactiveadmin/products/upload_products_for_store_csv"
+
+    each_row do |params, import|
+      product_attributes = params.slice(*[:name, :price, :sale_price])
+      product_attributes[:user_id] = import.controller.current_user.id
+      product_attributes[:store_id] = import.controller.params["store_id"]
+      import.model.create!(product_attributes)
+    end
+  end
+
+  # Example: using a Trax::Core transformer class,
+  # or transformer that responds to to_hash
+  define_import_for :products_for_store do
+    view "myactiveadmin/products/upload_products_for_store_csv"
+    transformer ::ProductForStoreTransformer
+
+    each_row do |params, import|
+      product_attributes[:user_id] = import.controller.current_user.id
+      product_attributes[:store_id] = import.controller.params["store_id"]
+      import.model.create!(product_attributes)
+    end
+  end
+
+  # Example: using transform as callback
+  define_import_for :products_for_store do
+    view "myactiveadmin/products/upload_products_for_store_csv"
+    transform { |row| ::ProductForStoreTransformer.new(row).to_hash }
+
+    each_row do |params, import|
+      product_attributes[:user_id] = import.controller.current_user.id
+      product_attributes[:store_id] = import.controller.params["store_id"]
+      import.model.create!(product_attributes)
+    end
   end
 end
 ```
