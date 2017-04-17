@@ -44,12 +44,12 @@ module ActiveAdminImporter
       @_form_action = val
     end
 
-    def permitted_headers(*_values)
-      @_permitted_headers = _values
-    end
-
     def required_headers(*_values)
       @_required_headers = _values
+    end
+
+    def transformer(val)
+      @_transformer = val
     end
 
     def view(value)

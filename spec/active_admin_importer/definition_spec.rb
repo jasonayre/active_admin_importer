@@ -9,7 +9,6 @@ describe ActiveAdminImporter::Definition do
     ::ActiveAdminImporter::Definition.new :products, controller_klass do
       view "blah"
       required_headers :name
-      permitted_headers :one, :two
       each_row do |params, import|
         import.model.create(params)
       end
@@ -18,6 +17,5 @@ describe ActiveAdminImporter::Definition do
 
   it { expect(subject[:view]).to eq "blah" }
   it { expect(subject[:required_headers]).to eq [:name] }
-  it { expect(subject[:permitted_headers]).to eq [:one, :two] }
   it { expect(subject[:each_row]).to be_a(Proc) }
 end

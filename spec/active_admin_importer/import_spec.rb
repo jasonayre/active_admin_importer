@@ -10,7 +10,6 @@ describe ActiveAdminImporter::Import do
   let(:definition) {
     _definition = ::ActiveAdminImporter::Definition.new :products, controller_klass do
       view "blah"
-      permitted_headers :one, :two
       before { |import| import.instance_variable_set(:"@something", "anything") }
       after { |import| import.instance_variable_set(:"@something_after", "anything") }
 
