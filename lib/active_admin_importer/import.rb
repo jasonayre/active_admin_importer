@@ -1,6 +1,6 @@
 module ActiveAdminImporter
   class Import
-    attr_reader :current_row, :csv_file, :definition, :model
+    attr_reader :controller, :current_row, :csv_file, :definition, :model
 
     def initialize(csv_file, definition:, controller:)
       @csv_file = ::ActiveAdminImporter::CsvFile.new(csv_file)
