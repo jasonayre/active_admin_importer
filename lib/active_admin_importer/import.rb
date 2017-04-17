@@ -57,11 +57,11 @@ module ActiveAdminImporter
     private
 
     def log_error(message)
-      ::Rails.logger.error("[IMPORT: #{@csv_file.md5}]: #{message}")
+      ::Rails.logger.error("[IMPORT: #{self.md5}]: #{message}")
     end
 
     def log_info(message)
-      ::Rails.logger.info("[IMPORT: #{@csv_file.md5}]: #{message}")
+      ::Rails.logger.info("[IMPORT: #{self.md5}]: #{message}")
     end
 
     def process_row(row)
