@@ -70,6 +70,10 @@ module ActiveAdminImporter
       data = row.to_hash
 
       if data.present?
+        @required_headers.each do |required_header|
+          raise ArgumentError.new("#{required_header} cannot be blank") if data[required_header.to_sym].blank?
+        end
+
         data = @definition[:transformer].new(data).to_hash if @definition[:transformer]
         data = @definition[:transform].call(data) if @definition[:transform]
         @definition[:each_row].call(data, self)
