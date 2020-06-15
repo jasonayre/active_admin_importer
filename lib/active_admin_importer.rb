@@ -35,7 +35,7 @@ module ActiveAdminImporter
   end
 
   def self.register(definition)
-    @registry[definition.key] = definition
+    registry[definition.key] = definition
   end
 end
 
