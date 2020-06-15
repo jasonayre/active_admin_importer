@@ -4,6 +4,10 @@ module ActiveAdminImporter
       @obj = {}
     end
 
+    def __getobj__
+      @obj
+    end
+
     def [](val)
       @obj[val]
     end
