@@ -1,4 +1,3 @@
-require 'pry'
 module ActiveAdminImporter
   class Import
     attr_reader :controller, :current_row, :csv_file, :definition, :model
@@ -28,8 +27,6 @@ module ActiveAdminImporter
       run_before_callback if run_before_callback?
       log_info("STARTING IMPORT")
 
-      binding.pry
-
       @csv_file.each_row do |row|
         begin
           process_row(row)
@@ -37,17 +34,6 @@ module ActiveAdminImporter
           record_failure(row, e)
         end
       end
-
-
-
-      # ::CSV.parse(@csv_file, :headers => true, :header_converters => :symbol) do |row|
-      #   binding.pry
-      #   begin
-      #     process_row(row)
-      #   rescue => e
-      #     record_failure(row, e)
-      #   end
-      # end
 
       log_error("FAILED TO PARSE ROWS #{failed_rows}") if failed_rows.any?
       log_info("FINISHED IMPORT")
@@ -65,8 +51,9 @@ module ActiveAdminImporter
     end
 
     def valid?
-      true
-      # @required_headers.all?{ |header| self.headers.include?(header) }
+      @required_headers.all? do |header|
+        self.headers.include?(header) || self.headers.include?(::ActiveAdminImporter::CsvFile::BOM + header)
+      end
     end
 
     private
