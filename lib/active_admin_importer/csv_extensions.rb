@@ -7,6 +7,6 @@ class CSV
   end
 
   def self.each_row_with_bom(file, options={}, &block)
-    ::CSV.open_with_bom(file, options) { |csv| csv.each(&block) }
+    ::CSV.open_with_bom(file, {**options, encoding:  'bom|utf-8'}) { |csv| csv.each(&block) }
   end
 end
