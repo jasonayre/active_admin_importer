@@ -10,17 +10,8 @@ module ActiveAdminImporter
       new(::File.new(path))
     end
 
-    def csv_read_options
-      @csv_read_options ||= begin
-        h = {**CSV_READ_OPTIONS}
-        h.merge(:encoding => 'bom|utf-8') if has_bom?
-        h
-      end
-    end
-
     def initialize(descriptor)
       @descriptor = descriptor
-      # @descriptor = ::File.new(descriptor, encoding: 'bom|utf-8')
     end
 
     def __getobj__
@@ -28,14 +19,14 @@ module ActiveAdminImporter
     end
 
     def has_bom?
-      headers[0].starts_with?(BOM)
+      @_has_bom ||= headers.any? {|header| header.starts_with?(BOM) }
     end
 
     def each_row(&block)
       if has_bom?
-        ::CSV.each_row_with_bom(self, CSV_READ_OPTIONS.dup, &block)
+        ::CSV.each_row_with_bom(self, CSV_READ_OPTIONS, &block)
       else
-        ::CSV.parse(self, CSV_READ_OPTIONS.dup, &block)
+        ::CSV.parse(self, CSV_READ_OPTIONS, &block)
       end
     end
 
