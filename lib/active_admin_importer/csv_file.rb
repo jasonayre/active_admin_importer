@@ -31,7 +31,7 @@ module ActiveAdminImporter
     end
 
     def find_row_by_number(number)
-      result = ::CSV.foreach(self, csv_read_options).with_index do |row, i|
+      result = ::CSV.foreach(self, CSV_READ_OPTIONS).with_index do |row, i|
         return row if i == number - 1
       end
 
