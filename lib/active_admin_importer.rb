@@ -2,6 +2,7 @@ require "active_admin_importer/version"
 require "active_support/all"
 require "active_admin_importer/engine"
 require "pry"
+require "active_admin_importer/csv_extensions"
 
 module ActiveAdminImporter
   extend ::ActiveSupport::Autoload

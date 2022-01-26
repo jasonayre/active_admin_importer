@@ -27,7 +27,7 @@ module ActiveAdminImporter
       run_before_callback if run_before_callback?
       log_info("STARTING IMPORT")
 
-      ::CSV.parse(@csv_file, :headers => true, :header_converters => :symbol) do |row|
+      @csv_file.each_row do |row|
         begin
           process_row(row)
         rescue => e
@@ -51,7 +51,9 @@ module ActiveAdminImporter
     end
 
     def valid?
-      @required_headers.all?{ |header| self.headers.include?(header) }
+      @required_headers.all? do |header|
+        self.headers.include?(header) || self.headers.include?(::ActiveAdminImporter::CsvFile::BOM + header)
+      end
     end
 
     private

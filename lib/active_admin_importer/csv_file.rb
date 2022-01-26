@@ -3,7 +3,8 @@ require 'digest'
 
 module ActiveAdminImporter
   class CsvFile < SimpleDelegator
-    CSV_READ_OPTIONS = { :headers => true, :header_converters => :symbol }.freeze
+    CSV_READ_OPTIONS = { :headers => true, :header_converters => :symbol }
+    BOM = "\xEF\xBB\xBF".force_encoding('UTF-8')
 
     def self.read(path)
       new(::File.new(path))
@@ -17,8 +18,16 @@ module ActiveAdminImporter
       @descriptor
     end
 
+    def has_bom?
+      @_has_bom ||= headers.any? {|header| header.starts_with?(BOM) }
+    end
+
     def each_row(&block)
-      ::CSV.parse(self, CSV_READ_OPTIONS, &block)
+      if has_bom?
+        ::CSV.each_row_with_bom(self, CSV_READ_OPTIONS, &block)
+      else
+        ::CSV.parse(self, CSV_READ_OPTIONS, &block)
+      end
     end
 
     def find_row_by_number(number)
